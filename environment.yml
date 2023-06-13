@@ -1,0 +1,67 @@
+# SPDX-FileCopyrightText: : 2017-2022 The PyPSA-Eur Authors
+#
+# SPDX-License-Identifier: MIT
+
+name: envOne
+channels:
+  - conda-forge
+  - bioconda
+  - gurobi
+  - gurobi
+dependencies:
+  - python>=3.8
+  - pip
+
+  - pypsa=0.21
+  #- atlite>=0.2.6
+  - dask=2022.12
+  - dask-jobqueue>=0.8
+  - gurobi=9.5
+
+  # Dependencies of the workflow itself
+#  - xlrd
+#  - openpyxl
+#  - pycountry
+  - seaborn
+  - snakemake-minimal
+#  - memory_profiler
+#  - yaml
+#  - pytables
+#  - lxml
+#  - powerplantmatching>=0.5.3
+  - numpy
+  - pandas
+#  - geopandas>=0.11.0
+#  - xarray
+#  - netcdf4
+#  - networkx
+  - scipy
+#  - shapely
+#  - progressbar2
+#  - pyomo
+  - matplotlib
+#  - proj
+#  - fiona <= 1.18.20  # Till issue https://github.com/Toblerity/Fiona/issues/1085 is not solved
+#  - country_converter
+
+  # Keep in conda environment when calling ipython
+  - ipython
+
+  # GIS dependencies:
+#  - cartopy
+#  - descartes
+#  - rasterio<=1.2.9  # 1.2.10 creates error https://github.com/PyPSA/atlite/issues/238
+
+  # PyPSA-Eur-Sec Dependencies
+#  - geopy
+#  - tqdm
+#  - pytz
+#  - tabula-py
+#  - pyxlsb
+
+  # additions to PyPSA_eur
+  - chaospy>=3.3
+
+  #- pip:
+    - vresutils>=0.3.1
+  #  - tsam>=1.1.0
