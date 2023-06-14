@@ -56,12 +56,12 @@ Runs the MAA algorithm documented in [Modeling all alternative solutions for hig
 *max_iter:* Maximum number of MAA iterations  
 
 
-#### PyMGA.methods.rMAA
+#### PyMGA.methods.bMAA
 
-**PyMGA.methods.rMAA.find_optimum()**
+**PyMGA.methods.bMAA.find_optimum()**
 Finds the cost optimal solution of the case object given
 
-**PyMGA.methods.rMAA.serach_directions(n_samples, har_samples, n_workers, max_iter, tol)**
+**PyMGA.methods.bMAA.serach_directions(n_samples, har_samples, n_workers, max_iter, tol)**
 
 *n_samples:* Maximum number of samples to draw  
 *har_samples:* Number of MAA samples to draw when computing acceptance rate and finding new directions. Default=5000  

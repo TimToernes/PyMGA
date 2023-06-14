@@ -9,7 +9,7 @@ from ..utilities.dask_helpers import start_dask_cluster
 from ..sampler.sampler import har_sample
 
 
-class rMAA:
+class bMAA:
     def __init__(self, case):
         """
         """
