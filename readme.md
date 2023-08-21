@@ -2,7 +2,7 @@
 
 A Python module conaining Modeling to Generate Alternatives and Modeling All Alternatives methods. 
 
-## Instalation 
+## Instalation
 
 Clone the repository to the decired installation folder, e.g. 'src/PyMGA'  and install the package with one of the following approaches:
 
@@ -10,9 +10,21 @@ Clone the repository to the decired installation folder, e.g. 'src/PyMGA'  and i
 
 Execute the following command from the package folder, e.g. `src/PyMGA`
 
+Current directory using `.`
+
 ```
-src/PyMGA> pip install PyMGA
-Processing /PyMGA
+src/PyMGA> pip install .
+```
+
+Current directory using the absolute path, `C:\path\to\PyMGA`
+
+```
+src/PyMGA> pip install C:\path\to\PyMGA
+```
+
+A successfull install using either method will return
+```
+Processing C:\path\to\PyMGA
 Installing collected packages: PyMGA
 Running setup.py install for PyMGA ... done
 Successfully installed PyMGA-0.0.1 
@@ -28,7 +40,6 @@ Execute the following command from the package folder, e.g. `src/PyMGA`
 src/PyMGA> python setup.py install
 ```
 
-
 ## PyMGA.methods
 
 #### PyMGA.methods.MGA(case)
@@ -42,7 +53,7 @@ Performs the MGA study on the case study. The method draws random search directi
 *n_samples:* The number of samples to draw  
 *n_workers:* number of parallel process to start. Default=4
 
-#### PyMGA.methods.MAA  
+#### PyMGA.methods.MAA
 
 **PyMGA.methods.MAA.find_optimum()**   
 Finds the cost optimal solution of the case object given
@@ -54,7 +65,6 @@ Runs the MAA algorithm documented in [Modeling all alternative solutions for hig
 *n_samples:* Maximum number of samples to draw  
 *n_workers:* number of parallel process to start. Default=4  
 *max_iter:* Maximum number of MAA iterations  
-
 
 #### PyMGA.methods.bMAA<br>
 
@@ -81,7 +91,6 @@ This class represents a PyPSA_Eur or PyPSA_Eur_Sec network as a case that can be
 *n_snapshots:* Number of snapshots to include from the given network. <br>
 *mga_slack:* Percent MGA slack to use as a fraction, e.g. 0.1 = 10%<br>
 *tmp_network_path:* Path where to store temporary network files<br>
-
 
 **PyMGA.cases.Cube(dim,cuts)**<br>
 A synthetic tescase of testing MGA/MAA methods. The method creates an optimization problem with a solution space in the form of a cube sliced with n cuts. <br>
