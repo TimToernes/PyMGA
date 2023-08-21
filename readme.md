@@ -16,15 +16,16 @@ Current directory using `.`
 src/PyMGA> pip install .
 ```
 
-Current directory using the absolute path, `C:\path\to\PyMGA`
+Current directory using the absolute path, `C:/path/to/src/PyMGA`
 
 ```
-src/PyMGA> pip install C:\path\to\PyMGA
+src/PyMGA> pip install C:/path/to/src/PyMGA
 ```
 
 A successfull install using either method will return
+
 ```
-Processing C:\path\to\PyMGA
+Processing C:/path/to/src/PyMGA
 Installing collected packages: PyMGA
 Running setup.py install for PyMGA ... done
 Successfully installed PyMGA-0.0.1 
