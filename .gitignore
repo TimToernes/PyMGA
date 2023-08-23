@@ -2,3 +2,5 @@ __pycache__/
 tmp/
 .vscode/
 .DS_Store
+build/
+PyMGA.egg-info/
