@@ -20,7 +20,7 @@ from pypsa.linopt import (
     get_sol,
     define_variables,
 )
-from pypsa.pf import get_switchable_as_dense as get_as_dense
+from pypsa.descriptors import get_switchable_as_dense as get_as_dense
 from pypsa.descriptors import get_extendable_i, get_non_extendable_i
 from pypsa.descriptors import free_output_series_dataframes
 
