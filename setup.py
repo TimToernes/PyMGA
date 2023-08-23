@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='PyMGA',
       version='0.0.1',
@@ -7,7 +7,7 @@ setup(name='PyMGA',
       author='Tim Pedersen',
       author_email='timtoernes@gmail.com',
       license='MIT',
-      packages=['PyMGA'],
+      packages=find_packages(),
       install_requires=['numpy>=1.22',
                         'pypsa>=0.21',
                         'matplotlib',
