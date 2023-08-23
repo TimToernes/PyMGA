@@ -13,7 +13,7 @@ setup(name='PyMGA',
                         'matplotlib',
                         # 'gurobi>=9.5',
                         'pandas',
-                        'vresutils>=0.3.1'
+                        'vresutils>=0.3.1',
                         'chaospy>=3.3',
                         'scipy',
                         'dask>=2022.12',
