@@ -5,7 +5,7 @@ from gurobipy import GRB
 
 
 class DirectionSampler():
-    """Class for drawign random directions on the unit hypersphere. 
+    """Class for drawing random directions on the unit hypersphere. 
     Using Chaospy to draw quassi-random samples from a 
     joint normal distribution
     """

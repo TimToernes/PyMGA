@@ -29,7 +29,6 @@ def setup_applevel_logger(logger_name, file_name=None):
         logger.addHandler(fh)
     return logger
 
-
 logger = setup_applevel_logger('TestCase')
 
 
