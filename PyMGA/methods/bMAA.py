@@ -20,10 +20,10 @@ class bMAA:
         """ 
         """
         # Finding optimal solution
-        self.obj, opt_sol = self.case.solve()
+        self.obj, opt_sol, n_solved = self.case.solve()
         self.opt_sol = list(opt_sol.values())[:self.dim]
 
-        return self.opt_sol, self.obj
+        return self.opt_sol, self.obj, n_solved
     
     def search_directions(self,
                           n_samples,

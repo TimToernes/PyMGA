@@ -30,8 +30,8 @@ def setup_applevel_logger(logger_name, file_name=None):
     return logger
 
 logger = setup_applevel_logger('TestCase')
-
-
+    
+    
 class PyPSA_case:
     def __init__(self,
                  config,
@@ -41,41 +41,7 @@ class PyPSA_case:
                  n_snapshots=100,
                  mga_slack=0.1):
 
-        if variables is None:
-            self.variables = {'x1': ['Generator',
-                                    ['onwind', 'offwind-ac', 'offwind-dc'],
-                                    'p_nom',
-                                    ['NO', 'SE', 'FI', 'DK', 'GB', 'IE']],
-                              'x2': ['Generator',
-                                    ['onwind', 'offwind-ac', 'offwind-dc'],
-                                    'p_nom',
-                                    ['DE', 'AT', 'LU', 'BE', 'NL', 'CZ']],
-                              'x3': ['Generator',
-                                    ['onwind', 'offwind-ac', 'offwind-dc'],
-                                    'p_nom',
-                                    ['PL', 'LT', 'LV', 'EE', 'RO', 'SK', 'HU']],
-                              'x4': ['Generator',
-                                    ['onwind', 'offwind-ac', 'offwind-dc'],
-                                    'p_nom',
-                                    ['PT', 'ES', 'FR']],
-                              'x5': ['Generator',
-                                    ['onwind', 'offwind-ac', 'offwind-dc'],
-                                    'p_nom',
-                                    ['IT', 'CH', 'SI', 'GR', 'HR', 'RS', 'AL', 'ME', 'BA', 'MK', 'BG']],
-                              'x6': ['Generator', ['solar'], 'p_nom', ['NO', 'SE', 'FI', 'DK', 'GB', 'IE']],
-                              'x7': ['Generator', ['solar'], 'p_nom', ['DE', 'AT', 'LU', 'BE', 'NL', 'CZ']],
-                              'x8': ['Generator',
-                                    ['solar'],
-                                    'p_nom',
-                                    ['PL', 'LT', 'LV', 'EE', 'RO', 'SK', 'HU']],
-                              'x9': ['Generator', ['solar'], 'p_nom', ['PT', 'ES', 'FR']],
-                              'x10': ['Generator',
-                                    ['solar'],
-                                    'p_nom',
-                                    ['IT', 'CH', 'SI', 'GR', 'HR', 'RS', 'AL', 'ME', 'BA', 'MK', 'BG']]}
-        else:
-            self.variables = variables
-
+        self.variables = variables
         self.base_network_path = base_network_path
         self.network_path = tmp_network_path
         self.config_path = 'networks/config.yaml'
@@ -89,48 +55,51 @@ class PyPSA_case:
         self.write_network()
 
     def write_network(self):
+        # Create network from given path
         n = pypsa.Network(self.base_network_path)
-
-        self.set_country(n)
-        self.get_var_costs(n)
-
+        
+        # Adjust snapshot amount and weighting
         n.snapshots = n.snapshots[self.start_point:self.start_point + self.n_snapshots]
         n.snapshot_weightings = n.snapshot_weightings[self.start_point:self.start_point+self.n_snapshots]
         n.snapshot_weightings = (n.snapshot_weightings*0 + int(8760/self.n_snapshots)).astype(int)
 
-        # Write network to file
-        for i in range(5):
-            p = os.path.dirname(self.network_path)
-            if not os.path.exists(p):
-                # If it doesn't exist, create it
-                os.makedirs(p)
-            try:
-                n.export_to_hdf5(self.network_path)
-            except Exception as e:
-                print('Error', e)
-                pass
+        # Write network to file ---------------------
+        p = os.path.dirname(self.network_path)
+        if not os.path.exists(p):
+            # If it doesn't exist, create it
+            os.makedirs(p)
+        try:
+            # Export network
+            n.export_to_hdf5(self.network_path)
+        except Exception as e:
+            print('Error', e)
+            pass
 
     def read_network(self):
+        # Create new network
         n = pypsa.Network()
-        override_component_attrs = get_override_component_attrs()
-        n = pypsa.Network(override_component_attrs=override_component_attrs)
+        
+        # Import network
         n.import_from_hdf5(self.network_path)
-        self.set_country(n)
+        
+        # Set optimum objective value
         n.objective_optimum = self.objective_optimum
-
-        # with open(self.config_path) as f:
-        #    config = yaml.safe_load(f)
 
         return n
 
     def solve(self):
+        # Get network
         n = self.read_network()
+        
+        # Solve network with options from config.yaml file
         n, status = solve_network(n,
                                   config=self.config['solving'],
                                   )
 
+        # Set objective optimum variable value
         self.objective_optimum = n.objective
 
+        # Save variable values from network as variable
         all_variable_values = self.get_var_values(n)
 
         return n.objective, all_variable_values
@@ -199,56 +168,21 @@ class PyPSA_case:
 
 
     def get_var_values(self, n, variables=None):
+        '''
+        Get the value of each variable. 
+        '''
         if variables is None:
             variables = list(self.variables.keys())
-
-        variable_cost = self.get_var_costs(n)
 
         variable_values = {}
         for var_i in self.variables:
             var_val = self.variables[var_i]
             df = n.df(var_val[0]).query('carrier==@var_val[1]')
-            if len(var_val) > 3:
-                df = df.query('country==@var_val[3]')
             val = df.loc[:, '{}_opt'.format(var_val[2])].sum()
             variable_values[var_i] = val
 
-        try:
-            variable_investment = {}
-            for var_i in variable_cost:
-                val = variable_values[var_i]*variable_cost[var_i]*1e-6
-                variable_investment[var_i] = val
-            
-        except Exception as e:
-            logger.error(e)
-            logger.error(variable_cost) 
-            logger.error(variable_values)
-            logger.error(variables)
-            raise Exception(e)
 
         return variable_values  # variable_investment
-
-    def get_var_costs(self, n):
-        variable_cost = {}
-
-        for var_i in self.variables:
-            var_val = self.variables[var_i]
-            df = n.df(var_val[0]).query('carrier==@var_val[1]')
-            if len(var_val) > 3:
-                df = df.query('country==@var_val[3]')
-            val = df.loc[:, 'capital_cost'].mean()
-            variable_cost[var_i] = val
-
-            self.variable_cost = variable_cost
-        return variable_cost
-
-    def set_country(self, n):
-        # Add country name as column in component datasets
-        for comp in n.one_port_components:
-            df = n.df(comp)
-            countries = [i[:2] for i in df.index]
-            df['country'] = countries
-
 
 def assign_carriers(n):
     """
@@ -383,16 +317,3 @@ def annual_variable_cost(
     total /= n.snapshot_weightings.objective.sum() / 8760
     return 
 
-
-def get_override_component_attrs():
-    override_component_attrs = pypsa.descriptors.Dict({k: v.copy() for k, v in pypsa.components.component_attrs.items()})
-    override_component_attrs["Link"].loc["bus2"] = ["string", np.nan, np.nan, "2nd bus", "Input (optional)"]
-    override_component_attrs["Link"].loc["bus3"] = ["string", np.nan, np.nan, "3rd bus", "Input (optional)"]
-    override_component_attrs["Link"].loc["bus4"] = ["string", np.nan, np.nan, "4th bus", "Input (optional)"]
-    override_component_attrs["Link"].loc["efficiency2"] = ["static or series", "per unit", 1., "2nd bus efficiency", "Input (optional)"]
-    override_component_attrs["Link"].loc["efficiency3"] = ["static or series", "per unit", 1., "3rd bus efficiency", "Input (optional)"]
-    override_component_attrs["Link"].loc["efficiency4"] = ["static or series", "per unit", 1., "4th bus efficiency", "Input (optional)"]
-    override_component_attrs["Link"].loc["p2"] = ["series", "MW", 0., "2nd bus output", "Output"]
-    override_component_attrs["Link"].loc["p3"] = ["series", "MW", 0., "3rd bus output", "Output"]
-    override_component_attrs["Link"].loc["p4"] = ["series", "MW", 0., "4th bus output", "Output"]
-    return override_component_attrs
