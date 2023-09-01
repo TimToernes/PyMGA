@@ -9,7 +9,7 @@ def har_sample(n_samples, x0, directions, verticies):
     x0: starting point
     directions: Directions that have
     been searched in with the MAA algorithm phase 1
-    vertivies: The verticies found by searing in
+    verticies: The verticies found by searing in
     directions with the MAA algorithm
     """
     for i in range(10):
